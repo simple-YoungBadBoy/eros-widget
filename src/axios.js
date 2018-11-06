@@ -64,8 +64,9 @@ export default class Axios {
         }
 
         function handleAxios (options, resolve, reject) {
-            const { name, url, data, method, header, params } = options
-            const requestPath = name && pathFormater(name, params)
+            let { name, url, data, method, header, params } = options
+            if (url && params) url = pathFormater(url, params, "url");
+            const requestPath = name && pathFormater(name, params, "");
             bmAxios.fetch({
                 url: url || (self.baseUrl + requestPath),
                 data: data || {},
@@ -83,7 +84,9 @@ export default class Axios {
         }
 
         function pathFormater (name, params) {
-            let _path = self.apis[name]
+            let _path;
+              if (type == "url") _path = name;
+              else _path = self.apis[name];
             const matcher = _path.match(/[^{][a-zA-Z0-9]+(?=\})/g)
 
             if (matcher && matcher.length) {
